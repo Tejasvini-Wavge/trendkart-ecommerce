@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 
 function Register() {
 
@@ -7,28 +8,62 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
+
     e.preventDefault();
+
 
     if (!name || !email || !password || !confirmPassword) {
       alert("Please fill all fields");
       return;
     }
 
+
     if (password !== confirmPassword) {
       alert("Password and Confirm Password do not match");
       return;
     }
 
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Password:", password);
 
-    alert("Registration Successful");
+    try {
+
+      const response = await axios.post(
+        "http://localhost:5000/auth/register",
+        {
+          name,
+          email,
+          password
+        }
+      );
+
+
+      alert(response.data.message);
+
+
+      // clear form after successful registration
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        error.response?.data?.message ||
+        "Registration failed"
+      );
+
+    }
+
   };
 
 
   return (
+
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
       <form
@@ -42,6 +77,7 @@ function Register() {
 
 
         {/* Name */}
+
         <input
           type="text"
           placeholder="Enter your full name"
@@ -52,6 +88,7 @@ function Register() {
 
 
         {/* Email */}
+
         <input
           type="email"
           placeholder="Enter your email"
@@ -62,6 +99,7 @@ function Register() {
 
 
         {/* Password */}
+
         <input
           type="password"
           placeholder="Enter your password"
@@ -72,16 +110,20 @@ function Register() {
 
 
         {/* Confirm Password */}
+
         <input
           type="password"
           placeholder="Confirm your password"
           value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          onChange={(e) =>
+            setConfirmPassword(e.target.value)
+          }
           className="w-full border border-gray-300 rounded-md p-3 mb-6"
         />
 
 
-        {/* Button */}
+        {/* Register Button */}
+
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700"
@@ -97,10 +139,14 @@ function Register() {
           </span>
         </p>
 
+
       </form>
 
     </div>
+
   );
 }
+
+
 
 export default Register;
