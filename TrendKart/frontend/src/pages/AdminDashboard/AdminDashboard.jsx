@@ -13,6 +13,12 @@ function AdminDashboard() {
   const [products, setProducts] = useState([]);
 
   // ==============================
+  // USERS
+  // ==============================
+
+  const [users, setUsers] = useState([]);
+
+  // ==============================
   // PRODUCT FORM
   // ==============================
 
@@ -46,9 +52,29 @@ function AdminDashboard() {
     }
   };
 
-  // Load products when dashboard opens
+  // ==============================
+  // GET ALL USERS
+  // ==============================
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/admin/users"
+      );
+
+      setUsers(response.data.users);
+    } catch (error) {
+      console.log("Error fetching users:", error);
+    }
+  };
+
+  // ==============================
+  // LOAD DATA
+  // ==============================
+
   useEffect(() => {
     fetchProducts();
+    fetchUsers();
   }, []);
 
   // ==============================
@@ -74,8 +100,8 @@ function AdminDashboard() {
       alert("Product added successfully");
 
       clearForm();
-
       fetchProducts();
+
     } catch (error) {
       console.log("Error adding product:", error);
 
@@ -126,8 +152,8 @@ function AdminDashboard() {
       alert("Product updated successfully");
 
       clearForm();
-
       fetchProducts();
+
     } catch (error) {
       console.log("Error updating product:", error);
 
@@ -159,6 +185,7 @@ function AdminDashboard() {
       alert("Product deleted successfully");
 
       fetchProducts();
+
     } catch (error) {
       console.log("Error deleting product:", error);
 
@@ -203,9 +230,7 @@ function AdminDashboard() {
   return (
     <div>
 
-      {/* ==============================
-          ADMIN HEADER
-      ============================== */}
+      {/* ADMIN HEADER */}
 
       <h1>Welcome to Admin Dashboard 👨‍💼</h1>
 
@@ -216,7 +241,7 @@ function AdminDashboard() {
       <hr />
 
       {/* ==============================
-          PRODUCT FORM
+          ADD / EDIT PRODUCT
       ============================== */}
 
       <h2>
@@ -233,8 +258,6 @@ function AdminDashboard() {
         }
       >
 
-        {/* NAME */}
-
         <input
           type="text"
           placeholder="Product Name"
@@ -248,8 +271,6 @@ function AdminDashboard() {
         <br />
         <br />
 
-        {/* DESCRIPTION */}
-
         <textarea
           placeholder="Product Description"
           value={description}
@@ -260,8 +281,6 @@ function AdminDashboard() {
 
         <br />
         <br />
-
-        {/* PRICE */}
 
         <input
           type="number"
@@ -276,8 +295,6 @@ function AdminDashboard() {
         <br />
         <br />
 
-        {/* CATEGORY */}
-
         <input
           type="text"
           placeholder="Category"
@@ -289,8 +306,6 @@ function AdminDashboard() {
 
         <br />
         <br />
-
-        {/* IMAGE */}
 
         <input
           type="text"
@@ -304,8 +319,6 @@ function AdminDashboard() {
         <br />
         <br />
 
-        {/* STOCK */}
-
         <input
           type="number"
           placeholder="Stock"
@@ -318,15 +331,11 @@ function AdminDashboard() {
         <br />
         <br />
 
-        {/* SUBMIT */}
-
         <button type="submit">
           {isEditing
             ? "Update Product"
             : "Add Product"}
         </button>
-
-        {/* CANCEL EDIT */}
 
         {isEditing && (
           <button
@@ -362,19 +371,12 @@ function AdminDashboard() {
           <thead>
 
             <tr>
-
               <th>ID</th>
-
               <th>Name</th>
-
               <th>Price</th>
-
               <th>Category</th>
-
               <th>Stock</th>
-
               <th>Action</th>
-
             </tr>
 
           </thead>
@@ -385,29 +387,17 @@ function AdminDashboard() {
 
               <tr key={product.id}>
 
-                <td>
-                  {product.id}
-                </td>
+                <td>{product.id}</td>
+
+                <td>{product.name}</td>
+
+                <td>₹{product.price}</td>
+
+                <td>{product.category}</td>
+
+                <td>{product.stock}</td>
 
                 <td>
-                  {product.name}
-                </td>
-
-                <td>
-                  ₹{product.price}
-                </td>
-
-                <td>
-                  {product.category}
-                </td>
-
-                <td>
-                  {product.stock}
-                </td>
-
-                <td>
-
-                  {/* EDIT */}
 
                   <button
                     onClick={() =>
@@ -416,8 +406,6 @@ function AdminDashboard() {
                   >
                     Edit
                   </button>
-
-                  {/* DELETE */}
 
                   <button
                     onClick={() =>
@@ -430,6 +418,71 @@ function AdminDashboard() {
                     Delete
                   </button>
 
+                </td>
+
+              </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
+
+      )}
+
+      <hr />
+
+      {/* ==============================
+          MANAGE USERS
+      ============================== */}
+
+      <h2>Manage Users 👥</h2>
+
+      {users.length === 0 ? (
+
+        <p>No users found.</p>
+
+      ) : (
+
+        <table
+          border="1"
+          cellPadding="10"
+        >
+
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Verified</th>
+              <th>Created At</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {users.map((user) => (
+
+              <tr key={user.id}>
+
+                <td>{user.id}</td>
+
+                <td>{user.name}</td>
+
+                <td>{user.email}</td>
+
+                <td>
+                  {user.is_verified === 1
+                    ? "Yes"
+                    : "No"}
+                </td>
+
+                <td>
+                  {new Date(
+                    user.created_at
+                  ).toLocaleDateString()}
                 </td>
 
               </tr>
