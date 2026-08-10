@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const productRoutes = require("./routes/productRoutes");
 require("./config/db");
 
 const app = express();
@@ -13,6 +15,8 @@ app.use(express.json());
 
 //Auth Routes
 app.use("/auth", authRoutes);
+app.use("/admin", adminRoutes);
+app.use("/admin", productRoutes);
 
 
 // Test API
