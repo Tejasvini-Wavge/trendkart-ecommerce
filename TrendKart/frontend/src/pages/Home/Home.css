@@ -1,37 +1,50 @@
 
+/* =========================================
+   GLOBAL
+========================================= */
+
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-.home {
-  width: 100%;
-  min-height: 100vh;
+body {
+  font-family: Arial, Helvetica, sans-serif;
   background: #ffffff;
   color: #111111;
-  font-family: Arial, Helvetica, sans-serif;
 }
 
-/* =========================
+button,
+a,
+input {
+  font-family: inherit;
+}
+
+
+/* =========================================
    OFFER BAR
-========================= */
+========================================= */
 
 .offer-bar {
+  height: 36px;
   background: #111111;
   color: #ffffff;
-  text-align: center;
-  padding: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   letter-spacing: 1px;
-  text-transform: uppercase;
 }
 
-/* =========================
+
+/* =========================================
    NAVBAR
-========================= */
+========================================= */
 
 .navbar {
   height: 78px;
@@ -39,17 +52,17 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #eeeeee;
   background: #ffffff;
+  border-bottom: 1px solid #eeeeee;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .brand {
   color: #111111;
   text-decoration: none;
-  font-size: 25px;
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: -1px;
 }
@@ -61,12 +74,11 @@ html {
 }
 
 .nav-links a {
-  text-decoration: none;
   color: #222222;
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s;
 }
 
 .nav-links a:hover {
@@ -79,78 +91,104 @@ html {
   gap: 8px;
 }
 
-.icon-btn,
-.cart-btn {
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background: transparent;
-  cursor: pointer;
-  font-size: 19px;
-  padding: 8px;
   color: #111111;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.icon-btn:hover {
+  background: #f5f5f5;
+  border-radius: 50%;
+}
+
+.cart-btn {
+  height: 42px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #111111;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .cart-btn span {
+  min-width: 19px;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
   background: #111111;
   color: #ffffff;
   font-size: 10px;
-  border-radius: 50%;
-  padding: 3px 6px;
-  vertical-align: top;
 }
 
-/* =========================
+
+/* =========================================
    HERO
-========================= */
+========================================= */
 
 .hero {
-  min-height: 600px;
+  min-height: 650px;
   display: grid;
-  grid-template-columns: 45% 55%;
-  background: #f3f1ed;
+  grid-template-columns: 1fr 1fr;
+  background: #f2f0ed;
 }
 
 .hero-content {
-  padding: 100px 10%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding: 80px 10%;
 }
 
 .hero-small-title {
+  margin-bottom: 22px;
   font-size: 12px;
+  font-weight: 700;
   letter-spacing: 3px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  color: #666666;
 }
 
 .hero-content h1 {
   font-size: clamp(45px, 5vw, 76px);
   line-height: 0.98;
   letter-spacing: -3px;
-  margin: 0 0 25px;
   font-weight: 800;
 }
 
-.hero-content > p:not(.hero-small-title) {
-  max-width: 470px;
-  color: #555555;
+.hero-description {
+  max-width: 480px;
+  margin-top: 30px;
+  color: #666666;
+  font-size: 16px;
   line-height: 1.7;
-  font-size: 15px;
 }
 
 .hero-buttons {
   display: flex;
   gap: 12px;
-  margin-top: 25px;
+  margin-top: 35px;
 }
 
 .primary-btn,
 .secondary-btn {
-  padding: 14px 25px;
+  padding: 15px 28px;
   text-decoration: none;
   font-size: 13px;
-  font-weight: bold;
-  text-transform: uppercase;
+  font-weight: 700;
+  transition: 0.2s;
 }
 
 .primary-btn {
@@ -158,180 +196,216 @@ html {
   color: #ffffff;
 }
 
-.secondary-btn {
-  border: 1px solid #111111;
-  color: #111111;
+.primary-btn:hover {
+  background: #333333;
 }
 
+.secondary-btn {
+  color: #111111;
+  border: 1px solid #111111;
+  background: transparent;
+}
+
+.secondary-btn:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+
+/* HERO IMAGE */
+
 .hero-image {
-  min-height: 600px;
+  min-height: 650px;
+  position: relative;
+  overflow: hidden;
   background:
     linear-gradient(
       135deg,
-      #d7d2cb,
-      #aaa49d
+      #242424,
+      #555555,
+      #191919
     );
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
 }
 
 .hero-image::before {
   content: "";
   position: absolute;
-  width: 400px;
-  height: 500px;
+  width: 430px;
+  height: 600px;
   border-radius: 50%;
-  background: #e4e0db;
-  top: 50px;
-  right: 20%;
+  border: 1px solid rgba(255,255,255,0.2);
+  transform: rotate(-12deg);
+}
+
+.hero-image::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 520px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  transform: rotate(20deg);
 }
 
 .hero-image-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  color: #ffffff;
   text-align: center;
 }
 
 .hero-image-content span {
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 5px;
 }
 
 .hero-image-content h2 {
-  font-size: 90px;
-  line-height: 0.85;
-  margin: 15px 0;
-  letter-spacing: -6px;
+  margin: 25px 0;
+  font-size: 70px;
+  line-height: 0.9;
+  letter-spacing: -4px;
 }
 
-/* =========================
+.hero-image-content p {
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+
+/* =========================================
    SECTIONS
-========================= */
+========================================= */
 
 .categories-section,
 .products-section,
+.category-products,
 .benefits-section {
-  padding: 90px 6%;
+  padding: 100px 6%;
 }
 
 .section-title {
   text-align: center;
-  margin-bottom: 45px;
+  margin-bottom: 50px;
 }
 
 .section-title p {
-  margin: 0 0 10px;
+  margin-bottom: 12px;
+  color: #888888;
   font-size: 11px;
+  font-weight: 700;
   letter-spacing: 3px;
-  color: #777777;
-  font-weight: bold;
 }
 
 .section-title h2 {
-  margin: 0;
-  font-size: 36px;
+  font-size: 40px;
   letter-spacing: -1px;
 }
 
-/* =========================
+
+/* =========================================
    CATEGORIES
-========================= */
+========================================= */
 
 .category-grid {
+  max-width: 1200px;
+  margin: auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
+  gap: 16px;
 }
 
 .category-card {
-  height: 350px;
-  text-decoration: none;
-  color: #ffffff;
+  min-height: 300px;
+  padding: 28px;
   display: flex;
   align-items: flex-end;
-  padding: 25px;
+  color: #ffffff;
+  text-decoration: none;
   position: relative;
   overflow: hidden;
+  transition: 0.3s;
 }
 
 .category-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  transition: transform 0.4s ease;
+  background: linear-gradient(
+    transparent 35%,
+    rgba(0,0,0,0.8)
+  );
 }
 
-.category-card:hover::before {
-  transform: scale(1.06);
+.category-card > div {
+  position: relative;
+  z-index: 2;
 }
 
-.men-card::before {
+.category-card:hover {
+  transform: translateY(-5px);
+}
+
+.men-card {
   background:
     linear-gradient(
-      to top,
-      #222222,
+      135deg,
+      #303030,
       #777777
     );
 }
 
-.women-card::before {
+.women-card {
   background:
     linear-gradient(
-      to top,
-      #7b6258,
-      #c6a99c
+      135deg,
+      #6c5b58,
+      #b19b94
     );
 }
 
-.tshirt-card::before {
+.tshirt-card {
   background:
     linear-gradient(
-      to top,
-      #333333,
-      #999999
+      135deg,
+      #4b4b4b,
+      #9b9b9b
     );
 }
 
-.offer-card::before {
+.offer-card {
   background:
     linear-gradient(
-      to top,
-      #8b2525,
-      #d17c7c
+      135deg,
+      #111111,
+      #555555
     );
-}
-
-.category-card div {
-  position: relative;
-  z-index: 1;
 }
 
 .category-card span {
   font-size: 11px;
-  opacity: 0.7;
+  letter-spacing: 2px;
 }
 
 .category-card h3 {
-  font-size: 30px;
   margin: 8px 0;
+  font-size: 28px;
 }
 
 .category-card p {
   font-size: 12px;
 }
 
-/* =========================
-   PRODUCTS
-========================= */
 
-.products-section {
-  background: #fafafa;
-}
+/* =========================================
+   PRODUCTS
+========================================= */
 
 .product-grid {
+  max-width: 1200px;
+  margin: auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 22px;
@@ -339,7 +413,8 @@ html {
 
 .product-card {
   background: #ffffff;
-  transition: transform 0.25s ease;
+  cursor: pointer;
+  transition: 0.25s;
 }
 
 .product-card:hover {
@@ -347,8 +422,8 @@ html {
 }
 
 .product-image {
-  height: 330px;
-  background: #eeeeee;
+  height: 360px;
+  background: #f2f2f2;
   position: relative;
   overflow: hidden;
 }
@@ -357,6 +432,12 @@ html {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  transition: 0.4s;
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.04);
 }
 
 .product-placeholder {
@@ -365,52 +446,58 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 80px;
+  font-size: 70px;
 }
 
 .wishlist-btn {
   position: absolute;
-  right: 12px;
-  top: 12px;
-  width: 36px;
-  height: 36px;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
   border: none;
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 21px;
+  z-index: 3;
+}
+
+.wishlist-btn:hover {
+  background: #111111;
+  color: #ffffff;
 }
 
 .new-badge {
   position: absolute;
-  left: 12px;
-  top: 12px;
+  top: 14px;
+  left: 14px;
   background: #111111;
   color: #ffffff;
-  padding: 6px 10px;
+  padding: 7px 10px;
   font-size: 9px;
   letter-spacing: 1px;
 }
 
 .product-info {
-  padding: 18px 5px 5px;
+  padding: 18px 2px;
 }
 
 .product-category {
-  margin: 0 0 7px;
+  margin-bottom: 7px;
   color: #888888;
   font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .product-info h3 {
-  margin: 0 0 8px;
-  font-size: 15px;
+  font-size: 16px;
+  margin-bottom: 8px;
 }
 
 .rating {
-  font-size: 11px;
+  font-size: 10px;
   margin-bottom: 14px;
 }
 
@@ -418,22 +505,60 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
 }
 
 .product-bottom strong {
-  font-size: 16px;
+  font-size: 17px;
 }
 
 .add-cart-btn {
+  border: 1px solid #111111;
+  background: #ffffff;
+  color: #111111;
+  padding: 9px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-cart-btn:hover {
   background: #111111;
   color: #ffffff;
-  border: none;
-  padding: 9px 13px;
-  cursor: pointer;
-  font-size: 10px;
-  text-transform: uppercase;
-  font-weight: bold;
 }
+
+
+/* =========================================
+   NO PRODUCTS
+========================================= */
+
+.no-products {
+  max-width: 500px;
+  margin: auto;
+  padding: 70px 20px;
+  text-align: center;
+  background: #f7f7f7;
+}
+
+.no-products div {
+  font-size: 60px;
+}
+
+.no-products h3 {
+  margin: 20px 0 8px;
+  font-size: 22px;
+}
+
+.no-products p {
+  color: #777777;
+  font-size: 14px;
+}
+
+
+/* =========================================
+   VIEW ALL
+========================================= */
 
 .view-all {
   text-align: center;
@@ -441,102 +566,105 @@ html {
 }
 
 .view-all button {
+  padding: 14px 30px;
+  border: 1px solid #111111;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.view-all button:hover {
   background: #111111;
   color: #ffffff;
-  border: none;
-  padding: 14px 28px;
-  cursor: pointer;
 }
 
-/* =========================
-   EMPTY PRODUCTS
-========================= */
 
-.no-products {
-  text-align: center;
-  padding: 70px 20px;
-  background: #ffffff;
-}
-
-.no-products div {
-  font-size: 55px;
-}
-
-.no-products h3 {
-  margin: 15px 0 5px;
-}
-
-.no-products p {
-  color: #777777;
-}
-
-/* =========================
-   PROMO
-========================= */
+/* =========================================
+   PROMOTION
+========================================= */
 
 .promo-section {
-  min-height: 420px;
+  min-height: 430px;
   background:
     linear-gradient(
       120deg,
-      #222222,
-      #555555
+      #171717,
+      #444444,
+      #191919
     );
-  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  color: #ffffff;
+  padding: 60px 20px;
 }
 
 .promo-content p {
   font-size: 11px;
   letter-spacing: 4px;
+  margin-bottom: 20px;
 }
 
 .promo-content h2 {
-  font-size: 58px;
-  line-height: 1;
-  letter-spacing: -2px;
-  margin: 15px 0;
+  font-size: 65px;
+  line-height: 0.95;
+  letter-spacing: -3px;
 }
 
 .promo-content span {
-  color: #dddddd;
+  display: block;
+  margin: 25px 0;
+  color: #cccccc;
 }
 
 .promo-content button {
-  display: block;
-  margin: 30px auto 0;
+  padding: 14px 28px;
+  border: 1px solid #ffffff;
   background: #ffffff;
   color: #111111;
-  border: none;
-  padding: 13px 25px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 700;
 }
 
-/* =========================
+.promo-content button:hover {
+  background: transparent;
+  color: #ffffff;
+}
+
+
+/* =========================================
    BENEFITS
-========================= */
+========================================= */
 
 .benefits-grid {
+  max-width: 1100px;
+  margin: auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
+  border-top: 1px solid #eeeeee;
+  border-bottom: 1px solid #eeeeee;
 }
 
 .benefit-card {
+  padding: 40px 25px;
   text-align: center;
-  padding: 25px;
+  border-right: 1px solid #eeeeee;
 }
 
-.benefit-card div {
-  font-size: 35px;
+.benefit-card:last-child {
+  border-right: none;
+}
+
+.benefit-card > div {
+  font-size: 30px;
+  margin-bottom: 18px;
 }
 
 .benefit-card h3 {
-  font-size: 16px;
+  margin-bottom: 10px;
+  font-size: 15px;
 }
 
 .benefit-card p {
@@ -545,13 +673,14 @@ html {
   line-height: 1.6;
 }
 
-/* =========================
+
+/* =========================================
    NEWSLETTER
-========================= */
+========================================= */
 
 .newsletter {
-  background: #f3f1ed;
-  padding: 60px 8%;
+  padding: 70px 8%;
+  background: #f2f0ed;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -559,125 +688,137 @@ html {
 }
 
 .newsletter p {
-  font-size: 10px;
+  color: #888888;
+  font-size: 11px;
+  font-weight: 700;
   letter-spacing: 3px;
-  font-weight: bold;
+  margin-bottom: 12px;
 }
 
 .newsletter h2 {
-  margin: 8px 0 0;
-  font-size: 30px;
+  font-size: 32px;
+  letter-spacing: -1px;
 }
 
 .newsletter-form {
   display: flex;
-  width: 450px;
+  min-width: 430px;
 }
 
 .newsletter-form input {
   flex: 1;
+  height: 50px;
+  padding: 0 18px;
   border: 1px solid #cccccc;
-  padding: 14px;
   outline: none;
+  background: #ffffff;
 }
 
 .newsletter-form button {
+  height: 50px;
+  padding: 0 22px;
   background: #111111;
   color: #ffffff;
   border: none;
-  padding: 0 22px;
   cursor: pointer;
+  font-weight: 700;
 }
 
-/* =========================
+
+/* =========================================
    FOOTER
-========================= */
+========================================= */
 
 .footer {
   background: #111111;
   color: #ffffff;
-  padding: 65px 6% 25px;
+  padding: 70px 6% 25px;
 }
 
 .footer-grid {
+  max-width: 1200px;
+  margin: auto;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 50px;
-  padding-bottom: 45px;
+  gap: 60px;
 }
 
-.footer h2 {
-  margin-top: 0;
-}
-
-.footer h3 {
-  font-size: 14px;
-  margin-top: 0;
-}
-
-.footer p,
-.footer a {
-  color: #aaaaaa;
-  font-size: 13px;
-  line-height: 2;
-}
-
-.footer a {
-  display: block;
-  text-decoration: none;
-}
-
-.footer a:hover {
-  color: #ffffff;
+.footer-brand h2 {
+  font-size: 24px;
 }
 
 .footer-brand p {
-  max-width: 250px;
+  margin-top: 15px;
+  max-width: 280px;
+  color: #aaaaaa;
+  line-height: 1.7;
+  font-size: 13px;
 }
 
 .social-icons {
-  margin-top: 15px;
+  margin-top: 25px;
   color: #aaaaaa;
   font-size: 12px;
 }
 
+.footer-grid h3 {
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.footer-grid a {
+  display: block;
+  margin-bottom: 13px;
+  color: #aaaaaa;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.footer-grid a:hover {
+  color: #ffffff;
+}
+
 .footer-bottom {
+  max-width: 1200px;
+  margin: 60px auto 0;
+  padding-top: 25px;
   border-top: 1px solid #333333;
-  padding-top: 20px;
   display: flex;
   justify-content: space-between;
   gap: 20px;
+  color: #777777;
+  font-size: 11px;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+
+/* =========================================
+   TABLET
+========================================= */
 
 @media (max-width: 1000px) {
 
   .nav-links {
-    display: none;
+    gap: 15px;
   }
 
-  .hero {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-content {
-    padding: 70px 8%;
-  }
-
-  .hero-image {
-    min-height: 450px;
-  }
-
-  .category-grid,
   .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .category-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .benefits-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .benefit-card:nth-child(2) {
+    border-right: none;
+  }
+
+  .benefit-card:nth-child(-n+2) {
+    border-bottom: 1px solid #eeeeee;
   }
 
   .newsletter {
@@ -685,23 +826,66 @@ html {
     align-items: flex-start;
   }
 
-  .newsletter-form {
-    width: 100%;
-  }
 }
 
-@media (max-width: 600px) {
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+  .offer-bar {
+    font-size: 9px;
+  }
 
   .navbar {
-    padding: 0 20px;
+    height: auto;
+    padding: 18px 5%;
+    flex-wrap: wrap;
+    gap: 15px;
   }
 
   .brand {
-    font-size: 21px;
+    font-size: 20px;
+  }
+
+  .nav-links {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: 5px;
+  }
+
+  .nav-links a {
+    white-space: nowrap;
+    font-size: 12px;
+  }
+
+  .nav-actions {
+    margin-left: auto;
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cart-btn {
+    height: 36px;
+    padding: 0 10px;
+  }
+
+
+  /* HERO */
+
+  .hero {
+    grid-template-columns: 1fr;
   }
 
   .hero-content {
-    padding: 55px 25px;
+    padding: 70px 7%;
   }
 
   .hero-content h1 {
@@ -709,63 +893,162 @@ html {
   }
 
   .hero-image {
-    min-height: 350px;
+    min-height: 420px;
   }
 
   .hero-image-content h2 {
-    font-size: 65px;
+    font-size: 55px;
   }
+
+
+  /* SECTIONS */
 
   .categories-section,
   .products-section,
+  .category-products,
   .benefits-section {
-    padding: 60px 20px;
+    padding: 70px 5%;
   }
 
   .section-title h2 {
-    font-size: 28px;
+    font-size: 30px;
   }
 
-  .category-grid,
-  .product-grid,
-  .benefits-grid {
-    grid-template-columns: 1fr;
+
+  /* CATEGORIES */
+
+  .category-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
 
   .category-card {
-    height: 280px;
+    min-height: 220px;
+    padding: 20px;
+  }
+
+  .category-card h3 {
+    font-size: 22px;
+  }
+
+
+  /* PRODUCTS */
+
+  .product-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
   }
 
   .product-image {
-    height: 360px;
+    height: 250px;
   }
 
-  .promo-content h2 {
-    font-size: 42px;
+  .product-info h3 {
+    font-size: 14px;
   }
 
-  .newsletter {
-    padding: 45px 25px;
-  }
-
-  .newsletter-form {
+  .product-bottom {
     flex-direction: column;
+    align-items: flex-start;
   }
 
-  .newsletter-form input {
+  .add-cart-btn {
     width: 100%;
   }
 
-  .newsletter-form button {
-    padding: 14px;
+
+  /* PROMO */
+
+  .promo-section {
+    min-height: 350px;
   }
+
+  .promo-content h2 {
+    font-size: 48px;
+  }
+
+
+  /* BENEFITS */
+
+  .benefits-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .benefit-card {
+    padding: 30px 15px;
+  }
+
+
+  /* NEWSLETTER */
+
+  .newsletter {
+    padding: 60px 5%;
+  }
+
+  .newsletter h2 {
+    font-size: 26px;
+  }
+
+  .newsletter-form {
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  /* FOOTER */
 
   .footer-grid {
     grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
   }
 
   .footer-bottom {
     flex-direction: column;
+    margin-top: 40px;
   }
+
+}
+
+
+@media (max-width: 450px) {
+
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-card {
+    min-height: 250px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    text-align: center;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .benefit-card {
+    border-right: none;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .benefit-card:last-child {
+    border-bottom: none;
+  }
+
 }
 

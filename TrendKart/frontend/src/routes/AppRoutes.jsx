@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // ================= USER PAGES =================
@@ -11,7 +10,8 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 
 import ProductDetails from "../pages/ProductDetails/ProductDetails";
 import Cart from "../pages/Cart/Cart";
-
+import Checkout from "../pages/Checkout/Checkout";
+import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
 // ================= ADMIN PAGES =================
 
 import AdminLogin from "../pages/AdminLogin/AdminLogin";
@@ -39,13 +39,11 @@ function AppRoutes() {
           element={<Home />}
         />
 
-
         {/* LOGIN */}
         <Route
           path="/login"
           element={<Login />}
         />
-
 
         {/* REGISTER */}
         <Route
@@ -53,13 +51,11 @@ function AppRoutes() {
           element={<Register />}
         />
 
-
         {/* VERIFY OTP */}
         <Route
           path="/verify-otp"
           element={<VerifyOTP />}
         />
-
 
         {/* USER DASHBOARD */}
         <Route
@@ -71,13 +67,11 @@ function AppRoutes() {
           }
         />
 
-
         {/* PRODUCT DETAILS */}
         <Route
           path="/product/:id"
           element={<ProductDetails />}
         />
-
 
         {/* CART */}
         <Route
@@ -85,6 +79,17 @@ function AppRoutes() {
           element={<Cart />}
         />
 
+        {/* CHECKOUT */}
+        <Route
+          path="/checkout"
+          element={<Checkout />}
+        />
+            
+
+            <Route
+  path="/order-success"
+  element={<OrderSuccess />}
+/>
 
         {/* =========================================
             ADMIN ROUTES
@@ -95,7 +100,6 @@ function AppRoutes() {
           path="/admin/login"
           element={<AdminLogin />}
         />
-
 
         {/* ADMIN DASHBOARD */}
         <Route
@@ -125,7 +129,13 @@ function AppRoutes() {
                 textAlign: "center",
               }}
             >
-              <h1 style={{ fontSize: "70px", margin: 0 }}>
+
+              <h1
+                style={{
+                  fontSize: "70px",
+                  margin: 0,
+                }}
+              >
                 404
               </h1>
 
@@ -150,6 +160,7 @@ function AppRoutes() {
               >
                 Go to Home
               </a>
+
             </div>
           }
         />
@@ -160,5 +171,5 @@ function AppRoutes() {
   );
 }
 
-export default AppRoutes;
 
+export default AppRoutes;

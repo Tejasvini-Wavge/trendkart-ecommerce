@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Cart.css";
@@ -8,6 +7,7 @@ function Cart() {
 
   const [cart, setCart] = useState([]);
 
+  // Load cart from localStorage
   useEffect(() => {
     loadCart();
   }, []);
@@ -19,19 +19,20 @@ function Cart() {
     setCart(savedCart);
   };
 
-  const updateQuantity = (id, quantity) => {
-    if (quantity < 1) {
-      return;
-    }
-
-    const updatedCart = cart.map((item) =>
-      item.id === id
-        ? {
+  // Increase quantity
+  const increaseQuantity = (id) => {
+    const updatedCart = cart.map((item) => {
+      if (item.id === id) {
+        if (item.quantity < item.stock) {
+          return {
             ...item,
-            quantity: quantity,
-          }
-        : item
-    );
+            quantity: item.quantity + 1,
+          };
+        }
+      }
+
+      return item;
+    });
 
     setCart(updatedCart);
 
@@ -41,7 +42,31 @@ function Cart() {
     );
   };
 
-  const removeProduct = (id) => {
+  // Decrease quantity
+  const decreaseQuantity = (id) => {
+    const updatedCart = cart
+      .map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            quantity: item.quantity - 1,
+          };
+        }
+
+        return item;
+      })
+      .filter((item) => item.quantity > 0);
+
+    setCart(updatedCart);
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(updatedCart)
+    );
+  };
+
+  // Remove product
+  const removeItem = (id) => {
     const updatedCart = cart.filter(
       (item) => item.id !== id
     );
@@ -54,27 +79,65 @@ function Cart() {
     );
   };
 
-  const getSubtotal = () => {
-    return cart.reduce(
-      (total, item) =>
-        total +
-        Number(item.price) * item.quantity,
-      0
-    );
+  // Clear cart
+  const clearCart = () => {
+    localStorage.removeItem("cart");
+
+    setCart([]);
   };
 
-  const subtotal = getSubtotal();
+  // Calculate subtotal
+  const subtotal = cart.reduce(
+    (total, item) =>
+      total +
+      Number(item.price) * item.quantity,
+    0
+  );
 
-  const delivery = subtotal >= 999 || subtotal === 0
-    ? 0
-    : 50;
+  // Delivery charge
+  const delivery =
+    subtotal >= 999 ? 0 : 50;
 
+  // Total
   const total = subtotal + delivery;
+
+  // Empty cart
+  if (cart.length === 0) {
+    return (
+      <div className="cart-page">
+
+        <div className="empty-cart">
+
+          <div className="empty-cart-icon">
+            🛒
+          </div>
+
+          <h1>
+            Your Cart is Empty
+          </h1>
+
+          <p>
+            Looks like you haven't added
+            anything to your cart yet.
+          </p>
+
+          <button
+            className="continue-shopping"
+            onClick={() => navigate("/")}
+          >
+            Continue Shopping
+          </button>
+
+        </div>
+
+      </div>
+    );
+  }
 
   return (
     <div className="cart-page">
 
-      {/* HEADER */}
+      {/* Header */}
 
       <div className="cart-header">
 
@@ -86,111 +149,92 @@ function Cart() {
         </button>
 
         <h1>
-          Shopping Cart 🛒
+          Shopping Cart
         </h1>
+
+        <span>
+          {cart.length}{" "}
+          {cart.length === 1
+            ? "Item"
+            : "Items"}
+        </span>
 
       </div>
 
 
-      {cart.length === 0 ? (
+      <div className="cart-container">
 
-        /* EMPTY CART */
+        {/* Cart Items */}
 
-        <div className="empty-cart">
+        <div className="cart-items">
 
-          <div className="empty-cart-icon">
-            🛒
-          </div>
+          {cart.map((item) => (
 
-          <h2>
-            Your cart is empty
-          </h2>
+            <div
+              className="cart-item"
+              key={item.id}
+            >
 
-          <p>
-            Looks like you haven't added
-            anything to your cart yet.
-          </p>
+              {/* Product Image */}
 
-          <button
-            onClick={() => navigate("/")}
-          >
-            Start Shopping
-          </button>
+              <div className="cart-product-image">
 
-        </div>
+                {item.image ? (
+                  <img
+                    src={
+                      item.image.startsWith("http")
+                        ? item.image
+                        : `/images/${item.image}`
+                    }
+                    alt={item.name}
+                  />
+                ) : (
+                  <div className="image-placeholder">
+                    👕
+                  </div>
+                )}
 
-      ) : (
-
-        /* CART */
-
-        <div className="cart-container">
-
-          {/* PRODUCTS */}
-
-          <div className="cart-products">
-
-            <h2>
-              Your Items
-            </h2>
-
-            {cart.map((item) => (
-
-              <div
-                className="cart-item"
-                key={item.id}
-              >
-
-                {/* IMAGE */}
-
-                <div className="cart-item-image">
-
-                  {item.image ? (
-
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                    />
-
-                  ) : (
-
-                    <span>
-                      👕
-                    </span>
-
-                  )}
-
-                </div>
+              </div>
 
 
-                {/* INFO */}
+              {/* Product Information */}
 
-                <div className="cart-item-info">
+              <div className="cart-product-info">
 
-                  <p className="cart-category">
-                    {item.category || "Fashion"}
-                  </p>
+                <p className="cart-category">
+                  {item.category || "Fashion"}
+                </p>
 
-                  <h3>
-                    {item.name}
-                  </h3>
+                <h2>
+                  {item.name}
+                </h2>
 
-                  <p>
-                    ₹{item.price}
-                  </p>
+                <p className="cart-description">
+                  {item.description ||
+                    "Premium quality fashion product"}
+                </p>
 
-                </div>
+                <p className="cart-price">
+                  ₹
+                  {Number(item.price).toFixed(2)}
+                </p>
+
+              </div>
 
 
-                {/* QUANTITY */}
+              {/* Quantity */}
 
-                <div className="cart-quantity">
+              <div className="cart-quantity">
+
+                <span>
+                  Quantity
+                </span>
+
+                <div className="quantity-control">
 
                   <button
                     onClick={() =>
-                      updateQuantity(
-                        item.id,
-                        item.quantity - 1
-                      )
+                      decreaseQuantity(item.id)
                     }
                   >
                     −
@@ -202,10 +246,10 @@ function Cart() {
 
                   <button
                     onClick={() =>
-                      updateQuantity(
-                        item.id,
-                        item.quantity + 1
-                      )
+                      increaseQuantity(item.id)
+                    }
+                    disabled={
+                      item.quantity >= item.stock
                     }
                   >
                     +
@@ -213,123 +257,137 @@ function Cart() {
 
                 </div>
 
+              </div>
 
-                {/* PRICE */}
 
-                <div className="cart-item-total">
+              {/* Item Total */}
 
+              <div className="cart-item-total">
+
+                <strong>
                   ₹
                   {(
                     Number(item.price) *
                     item.quantity
                   ).toFixed(2)}
-
-                </div>
-
-
-                {/* DELETE */}
+                </strong>
 
                 <button
                   className="remove-button"
                   onClick={() =>
-                    removeProduct(item.id)
+                    removeItem(item.id)
                   }
                 >
-                  🗑️
+                  Remove
                 </button>
 
               </div>
 
-            ))}
-
-          </div>
-
-
-          {/* ORDER SUMMARY */}
-
-          <div className="order-summary">
-
-            <h2>
-              Order Summary
-            </h2>
-
-            <div className="summary-row">
-
-              <span>
-                Subtotal
-              </span>
-
-              <strong>
-                ₹{subtotal.toFixed(2)}
-              </strong>
-
             </div>
 
-
-            <div className="summary-row">
-
-              <span>
-                Delivery
-              </span>
-
-              <strong>
-
-                {delivery === 0
-                  ? "FREE"
-                  : `₹${delivery}`}
-
-              </strong>
-
-            </div>
+          ))}
 
 
-            <hr />
+          {/* Clear Cart */}
 
-
-            <div className="summary-total">
-
-              <span>
-                Total
-              </span>
-
-              <strong>
-                ₹{total.toFixed(2)}
-              </strong>
-
-            </div>
-
-
-            <button
-              className="checkout-button"
-              onClick={() =>
-                alert(
-                  "Checkout coming soon 🚀"
-                )
-              }
-            >
-              Proceed to Checkout
-            </button>
-
-
-            <p className="free-delivery">
-
-              {subtotal < 999
-                ? `Add ₹${(
-                    999 - subtotal
-                  ).toFixed(2)} more for FREE delivery`
-                : "🎉 You got FREE delivery!"}
-
-            </p>
-
-          </div>
+          <button
+            className="clear-cart"
+            onClick={clearCart}
+          >
+            Clear Cart
+          </button>
 
         </div>
 
-      )}
+
+        {/* Order Summary */}
+
+        <div className="cart-summary">
+
+          <h2>
+            Order Summary
+          </h2>
+
+
+          <div className="summary-row">
+
+            <span>
+              Subtotal
+            </span>
+
+            <strong>
+              ₹{subtotal.toFixed(2)}
+            </strong>
+
+          </div>
+
+
+          <div className="summary-row">
+
+            <span>
+              Delivery
+            </span>
+
+            <strong>
+              {delivery === 0
+                ? "FREE"
+                : `₹${delivery}`}
+            </strong>
+
+          </div>
+
+
+          {subtotal < 999 && (
+            <p className="delivery-message">
+              Add ₹
+              {(999 - subtotal).toFixed(2)}
+              {" "}
+              more for FREE delivery
+            </p>
+          )}
+
+
+          <hr />
+
+
+          <div className="summary-total">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+              ₹{total.toFixed(2)}
+            </strong>
+
+          </div>
+
+
+          {/* Checkout */}
+
+          <button
+            className="checkout-button"
+            onClick={() =>
+              navigate("/checkout")
+            }
+          >
+            Proceed to Checkout
+          </button>
+
+
+          <button
+            className="continue-button"
+            onClick={() => navigate("/")}
+          >
+            Continue Shopping
+          </button>
+
+        </div>
+
+      </div>
 
     </div>
   );
 }
 
 export default Cart;
-

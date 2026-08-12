@@ -68,6 +68,44 @@ const adminLogin = (req, res) => {
     });
 };
 
+
+
+
+
+
+const getAllUsers = (req, res) => {
+
+    const sql = `
+        SELECT
+            id,
+            name,
+            email,
+            is_verified,
+            created_at
+        FROM users
+        ORDER BY id DESC
+    `;
+
+    db.query(sql, (err, results) => {
+
+        if (err) {
+            console.log("Error fetching users:", err);
+
+            return res.status(500).json({
+                message: "Failed to fetch users"
+            });
+        }
+
+        res.status(200).json({
+            message: "Users fetched successfully",
+            users: results
+        });
+
+    });
+};
+
+
 module.exports = {
-    adminLogin
+    adminLogin,
+    getAllUsers
 };

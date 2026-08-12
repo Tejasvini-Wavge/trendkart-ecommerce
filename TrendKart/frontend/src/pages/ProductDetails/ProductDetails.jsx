@@ -1,7 +1,5 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import "./ProductDetails.css";
 
 function ProductDetails() {
@@ -10,6 +8,8 @@ function ProductDetails() {
 
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchProduct();
@@ -17,13 +17,22 @@ function ProductDetails() {
 
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(
+      const response = await fetch(
         `http://localhost:5000/admin/products/${id}`
       );
 
-      setProduct(response.data.product);
+      if (!response.ok) {
+        throw new Error("Product not found");
+      }
+
+      const data = await response.json();
+
+      setProduct(data.product || data);
     } catch (error) {
-      console.log("Error fetching product:", error);
+      console.error(error);
+      setError("Unable to load product");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,7 +75,7 @@ function ProductDetails() {
     navigate("/cart");
   };
 
-  if (!product) {
+  if (loading) {
     return (
       <div className="product-loading">
         Loading product...
@@ -74,126 +83,189 @@ function ProductDetails() {
     );
   }
 
+  if (error || !product) {
+    return (
+      <div className="product-error">
+        <h2>{error || "Product not found"}</h2>
+
+        <button onClick={() => navigate("/")}>
+          Back to Home
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="product-details-page">
+
+      {/* BACK */}
+
+      <button
+        className="product-back"
+        onClick={() => navigate(-1)}
+      >
+        ← Back to Shopping
+      </button>
+
 
       <div className="product-details-container">
 
         {/* IMAGE */}
 
-        <div className="details-image">
+        <div className="product-details-image">
 
           {product.image ? (
             <img
-              src={product.image}
+              src={
+                product.image.startsWith("http")
+                  ? product.image
+                  : `/images/${product.image}`
+              }
               alt={product.name}
             />
           ) : (
-            <div className="details-placeholder">
+            <div className="product-image-placeholder">
               👕
             </div>
           )}
 
         </div>
 
-        {/* DETAILS */}
 
-        <div className="details-content">
+        {/* INFORMATION */}
+
+        <div className="product-details-info">
 
           <p className="details-category">
-            {product.category}
+            {product.category || "Fashion"}
           </p>
 
-          <h1>{product.name}</h1>
+          <h1>
+            {product.name}
+          </h1>
 
           <div className="details-rating">
             ⭐⭐⭐⭐⭐
-            <span> 4.8 (24 Reviews)</span>
+            <span> 4.8 (120 Reviews)</span>
           </div>
 
           <h2 className="details-price">
-            ₹{product.price}
+            ₹{Number(product.price).toFixed(2)}
           </h2>
 
           <p className="details-description">
             {product.description ||
-              "Stylish and comfortable fashion product from TrendKart."}
+              "Premium quality fashion product designed for comfort and everyday style."}
           </p>
 
-          <div className="details-stock">
-            {product.stock > 0
-              ? `✓ ${product.stock} items available`
-              : "✕ Out of stock"}
+
+          {/* STOCK */}
+
+          <div className="stock-info">
+
+            {product.stock > 0 ? (
+              <>
+                <span className="in-stock">
+                  ✓ In Stock
+                </span>
+
+                <span>
+                  {product.stock} items available
+                </span>
+              </>
+            ) : (
+              <span className="out-stock">
+                Out of Stock
+              </span>
+            )}
+
           </div>
+
 
           {/* QUANTITY */}
 
-          <div className="quantity-section">
+          {product.stock > 0 && (
+            <div className="quantity-section">
 
-            <span>Quantity</span>
+              <span>
+                Quantity
+              </span>
 
-            <div className="quantity-control">
+              <div className="quantity-control">
 
-              <button
-                onClick={() =>
-                  setQuantity(
-                    Math.max(1, quantity - 1)
-                  )
-                }
-              >
-                −
-              </button>
-
-              <span>{quantity}</span>
-
-              <button
-                onClick={() =>
-                  setQuantity(
-                    Math.min(
-                      product.stock,
-                      quantity + 1
+                <button
+                  onClick={() =>
+                    setQuantity(
+                      Math.max(1, quantity - 1)
                     )
-                  )
-                }
-              >
-                +
-              </button>
+                  }
+                >
+                  −
+                </button>
+
+                <span>
+                  {quantity}
+                </span>
+
+                <button
+                  onClick={() =>
+                    setQuantity(
+                      Math.min(
+                        product.stock,
+                        quantity + 1
+                      )
+                    )
+                  }
+                >
+                  +
+                </button>
+
+              </div>
 
             </div>
+          )}
 
-          </div>
 
-          {/* ACTIONS */}
+          {/* BUTTONS */}
 
-          <div className="details-actions">
+          <div className="details-buttons">
 
             <button
-              className="add-to-cart-large"
-              onClick={addToCart}
+              className="add-to-cart"
               disabled={product.stock <= 0}
+              onClick={addToCart}
             >
               🛒 Add to Cart
             </button>
 
-            <button className="wishlist-large">
-              ♡
+            <button
+              className="buy-now"
+              disabled={product.stock <= 0}
+              onClick={() => {
+                addToCart();
+              }}
+            >
+              Buy Now
             </button>
 
           </div>
+
+
+          {/* FEATURES */}
 
           <div className="product-features">
 
             <div>
               🚚
               <span>
-                Free delivery on orders above ₹999
+                Free delivery over ₹999
               </span>
             </div>
 
             <div>
-              ↩️
+              🔄
               <span>
-                Easy returns
+                Easy 7-day returns
               </span>
             </div>
 
@@ -215,4 +287,3 @@ function ProductDetails() {
 }
 
 export default ProductDetails;
-
