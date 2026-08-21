@@ -19,47 +19,59 @@ function Checkout() {
 
   const [placingOrder, setPlacingOrder] = useState(false);
 
+  // LOAD CART + USER
 
-  // ========================================
-  // LOAD CART
-  // ========================================
 
   useEffect(() => {
-
     const savedCart =
       JSON.parse(localStorage.getItem("cart")) || [];
 
+    const savedUser =
+      JSON.parse(localStorage.getItem("user"));
+
+    // Check login
+    if (!savedUser) {
+      alert("Please login before checkout");
+      navigate("/login");
+      return;
+    }
+
+    // Check cart
     if (savedCart.length === 0) {
-
       navigate("/cart");
-
       return;
     }
 
     setCart(savedCart);
 
+    // Automatically fill user information
+    setForm((previousForm) => ({
+      ...previousForm,
+
+      name: savedUser.name || "",
+      email: savedUser.email || "",
+    }));
+
   }, [navigate]);
 
 
-  // ========================================
+  
   // HANDLE INPUT
-  // ========================================
+
 
   const handleChange = (e) => {
-
     const { name, value } = e.target;
 
     setForm((previousForm) => ({
       ...previousForm,
       [name]: value,
     }));
-
   };
 
 
-  // ========================================
-  // CALCULATE TOTAL
-  // ========================================
+
+  // CALCULATE SUBTOTAL
+ 
 
   const subtotal = cart.reduce(
     (total, item) =>
@@ -70,29 +82,46 @@ function Checkout() {
   );
 
 
+ 
+  // DELIVERY CHARGE
+
+
   const delivery =
     subtotal >= 999 ? 0 : 50;
+
+
+
+  // FINAL TOTAL
 
 
   const total =
     subtotal + delivery;
 
 
-  // ========================================
+
   // PLACE ORDER
-  // ========================================
+
 
   const handlePlaceOrder = async (e) => {
-
     e.preventDefault();
 
-
+    // Check cart
     if (cart.length === 0) {
-
       alert("Your cart is empty");
-
       navigate("/cart");
+      return;
+    }
 
+
+    // Get logged-in user
+    const user =
+      JSON.parse(localStorage.getItem("user"));
+
+
+    // Check user
+    if (!user || !user.id) {
+      alert("Please login before placing an order");
+      navigate("/login");
       return;
     }
 
@@ -102,10 +131,16 @@ function Checkout() {
 
     try {
 
+      
+      // ORDER DATA
+     
+
       const orderData = {
 
-        user_id: null,
+        // Logged-in user's ID
+        user_id: user.id,
 
+        // Customer information
         customer_name: form.name,
 
         email: form.email,
@@ -120,11 +155,14 @@ function Checkout() {
 
         pincode: form.pincode,
 
+        // Order amount
         total_amount: total,
 
+        // Payment
         payment_method:
           "Cash on Delivery",
 
+        // Products
         items: cart,
 
       };
@@ -136,6 +174,30 @@ function Checkout() {
       );
 
 
+    
+      // GET JWT TOKEN
+     
+
+      const token =
+        localStorage.getItem("token");
+
+
+      if (!token) {
+
+        alert(
+          "Login session expired. Please login again."
+        );
+
+        navigate("/login");
+
+        return;
+      }
+
+
+   
+      // CALL ORDER API
+     
+
       const response = await fetch(
         "http://localhost:5000/orders",
         {
@@ -144,14 +206,20 @@ function Checkout() {
           headers: {
             "Content-Type":
               "application/json",
+
+            Authorization:
+              `Bearer ${token}`,
           },
 
-          body: JSON.stringify(
-            orderData
-          ),
+          body:
+            JSON.stringify(orderData),
         }
       );
 
+
+    
+      // RESPONSE
+   
 
       const data =
         await response.json();
@@ -163,31 +231,39 @@ function Checkout() {
       );
 
 
+     
+      // CHECK ERROR
+     
+
       if (!response.ok) {
 
         throw new Error(
           data.message ||
             "Failed to place order"
         );
-
       }
 
 
-      // ========================================
+     
       // ORDER SUCCESS
-      // ========================================
+ 
 
+      // Remove cart
       localStorage.removeItem("cart");
 
 
+      // Navigate to success page
       navigate(
         "/order-success",
         {
           state: {
+
             orderId:
               data.orderId,
 
-            total: total,
+            total:
+              total,
+
           },
         }
       );
@@ -212,21 +288,20 @@ function Checkout() {
       setPlacingOrder(false);
 
     }
-
   };
 
 
-  // ========================================
+  // 
   // PAGE
-  // ========================================
+ 
 
   return (
     <div className="checkout-page">
 
 
-      {/* ========================================
+      {/* 
           HEADER
-      ======================================== */}
+       */}
 
       <div className="checkout-header">
 
@@ -247,13 +322,16 @@ function Checkout() {
       </div>
 
 
+      {/* 
+          CHECKOUT CONTAINER
+    */}
 
       <div className="checkout-container">
 
 
-        {/* ========================================
-            DELIVERY INFORMATION
-        ======================================== */}
+        {/* 
+            DELIVERY FORM
+      */}
 
         <div className="checkout-form-section">
 
@@ -269,7 +347,9 @@ function Checkout() {
           >
 
 
-            {/* NAME + EMAIL */}
+            {/* 
+                NAME + EMAIL
+           */}
 
             <div className="form-row">
 
@@ -316,12 +396,12 @@ function Checkout() {
 
               </div>
 
-
             </div>
 
 
-
-            {/* PHONE */}
+            {/* 
+                PHONE
+             */}
 
             <div className="form-group">
 
@@ -346,8 +426,9 @@ function Checkout() {
             </div>
 
 
-
-            {/* ADDRESS */}
+            {/* 
+                ADDRESS
+           */}
 
             <div className="form-group">
 
@@ -370,8 +451,9 @@ function Checkout() {
             </div>
 
 
-
-            {/* CITY + STATE + PINCODE */}
+            {/* 
+                CITY + STATE + PINCODE
+         */}
 
             <div className="form-row">
 
@@ -442,14 +524,12 @@ function Checkout() {
 
               </div>
 
-
             </div>
 
 
-
-            {/* ========================================
+            {/* 
                 PAYMENT
-            ======================================== */}
+             */}
 
             <div className="payment-section">
 
@@ -476,16 +556,15 @@ function Checkout() {
 
               <p>
                 Online payment will be
-                added later.
+                available soon.
               </p>
 
             </div>
 
 
-
-            {/* ========================================
-                PLACE ORDER
-            ======================================== */}
+            {/* 
+                PLACE ORDER BUTTON
+          */}
 
             <button
               type="submit"
@@ -499,16 +578,14 @@ function Checkout() {
 
             </button>
 
-
           </form>
 
         </div>
 
 
-
-        {/* ========================================
+        {/* 
             ORDER SUMMARY
-        ======================================== */}
+        */}
 
         <div className="checkout-summary">
 
@@ -517,8 +594,9 @@ function Checkout() {
           </h2>
 
 
-
-          {/* PRODUCTS */}
+          {/* 
+              CART PRODUCTS
+           */}
 
           {cart.map((item) => (
 
@@ -528,7 +606,7 @@ function Checkout() {
             >
 
 
-              {/* IMAGE */}
+              {/* PRODUCT IMAGE */}
 
               <div className="checkout-item-image">
 
@@ -536,9 +614,7 @@ function Checkout() {
 
                   <img
                     src={
-                      item.image.startsWith(
-                        "http"
-                      )
+                      item.image.startsWith("http")
                         ? item.image
                         : `/images/${item.image}`
                     }
@@ -556,8 +632,7 @@ function Checkout() {
               </div>
 
 
-
-              {/* PRODUCT INFO */}
+              {/* PRODUCT INFORMATION */}
 
               <div className="checkout-item-info">
 
@@ -567,8 +642,7 @@ function Checkout() {
 
 
                 <p>
-                  Qty:{" "}
-                  {item.quantity}
+                  Qty: {item.quantity}
                 </p>
 
 
@@ -582,14 +656,14 @@ function Checkout() {
 
               </div>
 
-
             </div>
 
           ))}
 
 
-
-          {/* SUBTOTAL */}
+          {/* 
+              SUBTOTAL
+           */}
 
           <div className="summary-line">
 
@@ -606,8 +680,9 @@ function Checkout() {
           </div>
 
 
-
-          {/* DELIVERY */}
+          {/* 
+              DELIVERY
+          */}
 
           <div className="summary-line">
 
@@ -627,8 +702,9 @@ function Checkout() {
           </div>
 
 
-
-          {/* FREE DELIVERY MESSAGE */}
+          {/* 
+              FREE DELIVERY MESSAGE
+          */}
 
           {subtotal < 999 && (
 
@@ -639,22 +715,23 @@ function Checkout() {
                 marginTop: "10px",
               }}
             >
+
               Add ₹
-              {(999 - subtotal).toFixed(
-                2
-              )}{" "}
+              {(999 - subtotal).toFixed(2)}
+              {" "}
               more for FREE delivery.
+
             </p>
 
           )}
 
 
-
           <hr />
 
 
-
-          {/* TOTAL */}
+          {/* 
+              FINAL TOTAL
+         */}
 
           <div className="checkout-total">
 
@@ -670,15 +747,12 @@ function Checkout() {
 
           </div>
 
-
         </div>
-
 
       </div>
 
     </div>
   );
 }
-
 
 export default Checkout;

@@ -1,503 +1,578 @@
-
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import "./AdminDashboard.css";
 
 function AdminDashboard() {
+
   const navigate = useNavigate();
 
-  // ==============================
-  // PRODUCTS
-  // ==============================
-
   const [products, setProducts] = useState([]);
-
-  // ==============================
-  // USERS
-  // ==============================
-
   const [users, setUsers] = useState([]);
 
-  // ==============================
-  // PRODUCT FORM
-  // ==============================
-
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [image, setImage] = useState("");
-  const [stock, setStock] = useState("");
-
-  // ==============================
-  // EDIT STATE
-  // ==============================
-
-  const [editingId, setEditingId] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-
-  // ==============================
-  // GET ALL PRODUCTS
-  // ==============================
-
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/admin/products"
-      );
-
-      setProducts(response.data.products);
-    } catch (error) {
-      console.log("Error fetching products:", error);
-    }
-  };
-
-  // ==============================
-  // GET ALL USERS
-  // ==============================
-
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/admin/users"
-      );
-
-      setUsers(response.data.users);
-    } catch (error) {
-      console.log("Error fetching users:", error);
-    }
-  };
-
-  // ==============================
-  // LOAD DATA
-  // ==============================
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchProducts();
     fetchUsers();
   }, []);
 
-  // ==============================
-  // ADD PRODUCT
-  // ==============================
+  // ========================================
+  // FETCH PRODUCTS
+  // ========================================
 
-  const handleAddProduct = async (e) => {
-    e.preventDefault();
+  const fetchProducts = async () => {
 
     try {
-      await axios.post(
-        "http://localhost:5000/admin/products",
+
+      const response = await axios.get(
+        "http://localhost:5000/admin/products"
+      );
+
+      setProducts(response.data.products || []);
+
+    } catch (error) {
+
+      console.error(
+        "Error fetching products:",
+        error
+      );
+
+    }
+
+  };
+
+
+  // ========================================
+  // FETCH USERS
+  // ========================================
+
+  const fetchUsers = async () => {
+
+    try {
+
+      const response = await axios.get(
+        "http://localhost:5000/admin/users",
         {
-          name,
-          description,
-          price,
-          category,
-          image,
-          stock,
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
 
-      alert("Product added successfully");
-
-      clearForm();
-      fetchProducts();
+      setUsers(response.data.users || []);
 
     } catch (error) {
-      console.log("Error adding product:", error);
 
-      alert(
-        error.response?.data?.message ||
-        "Failed to add product"
-      );
-    }
-  };
-
-  // ==============================
-  // SELECT PRODUCT FOR EDIT
-  // ==============================
-
-  const handleEditProduct = (product) => {
-    setEditingId(product.id);
-
-    setName(product.name);
-    setDescription(product.description || "");
-    setPrice(product.price);
-    setCategory(product.category || "");
-    setImage(product.image || "");
-    setStock(product.stock);
-
-    setIsEditing(true);
-  };
-
-  // ==============================
-  // UPDATE PRODUCT
-  // ==============================
-
-  const handleUpdateProduct = async (e) => {
-    e.preventDefault();
-
-    try {
-      await axios.put(
-        `http://localhost:5000/admin/products/${editingId}`,
-        {
-          name,
-          description,
-          price,
-          category,
-          image,
-          stock,
-        }
+      console.error(
+        "Error fetching users:",
+        error
       );
 
-      alert("Product updated successfully");
-
-      clearForm();
-      fetchProducts();
-
-    } catch (error) {
-      console.log("Error updating product:", error);
-
-      alert(
-        error.response?.data?.message ||
-        "Failed to update product"
-      );
-    }
-  };
-
-  // ==============================
-  // DELETE PRODUCT
-  // ==============================
-
-  const handleDeleteProduct = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?"
-    );
-
-    if (!confirmDelete) {
-      return;
     }
 
-    try {
-      await axios.delete(
-        `http://localhost:5000/admin/products/${id}`
-      );
-
-      alert("Product deleted successfully");
-
-      fetchProducts();
-
-    } catch (error) {
-      console.log("Error deleting product:", error);
-
-      alert(
-        error.response?.data?.message ||
-        "Failed to delete product"
-      );
-    }
   };
 
-  // ==============================
-  // CLEAR FORM
-  // ==============================
 
-  const clearForm = () => {
-    setName("");
-    setDescription("");
-    setPrice("");
-    setCategory("");
-    setImage("");
-    setStock("");
-
-    setEditingId(null);
-    setIsEditing(false);
-  };
-
-  // ==============================
-  // ADMIN LOGOUT
-  // ==============================
+  // ========================================
+  // LOGOUT
+  // ========================================
 
   const handleLogout = () => {
-    localStorage.removeItem("adminToken");
-    localStorage.removeItem("admin");
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
     navigate("/admin/login");
+
   };
 
-  // ==============================
-  // UI
-  // ==============================
 
   return (
-    <div>
 
-      {/* ADMIN HEADER */}
+    <div className="admin-dashboard">
 
-      <h1>Welcome to Admin Dashboard 👨‍💼</h1>
 
-      <button onClick={handleLogout}>
-        Logout
-      </button>
+      {/* ========================================
+          SIDEBAR
+      ======================================== */}
 
-      <hr />
+      <aside className="admin-sidebar">
 
-      {/* ==============================
-          ADD / EDIT PRODUCT
-      ============================== */}
+        <div className="admin-logo">
+          🛍️ TrendKart
+        </div>
 
-      <h2>
-        {isEditing
-          ? "Edit Product ✏️"
-          : "Add Product ➕"}
-      </h2>
+        <p className="admin-label">
+          ADMIN PANEL
+        </p>
 
-      <form
-        onSubmit={
-          isEditing
-            ? handleUpdateProduct
-            : handleAddProduct
-        }
-      >
 
-        <input
-          type="text"
-          placeholder="Product Name"
-          value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
-          required
-        />
+        <nav>
 
-        <br />
-        <br />
+          <Link
+            to="/admin/dashboard"
+            className="active"
+          >
+            📊 Dashboard
+          </Link>
 
-        <textarea
-          placeholder="Product Description"
-          value={description}
-          onChange={(e) =>
-            setDescription(e.target.value)
-          }
-        />
+          <Link to="/admin/products">
+            🛍️ Products
+          </Link>
 
-        <br />
-        <br />
+          <Link to="/admin/users">
+            👥 Users
+          </Link>
 
-        <input
-          type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) =>
-            setPrice(e.target.value)
-          }
-          required
-        />
+          <Link to="/admin/orders">
+            📦 Orders
+          </Link>
 
-        <br />
-        <br />
+          <Link to="/admin/settings">
+            ⚙️ Settings
+          </Link>
 
-        <input
-          type="text"
-          placeholder="Category"
-          value={category}
-          onChange={(e) =>
-            setCategory(e.target.value)
-          }
-        />
+        </nav>
 
-        <br />
-        <br />
 
-        <input
-          type="text"
-          placeholder="Image URL"
-          value={image}
-          onChange={(e) =>
-            setImage(e.target.value)
-          }
-        />
-
-        <br />
-        <br />
-
-        <input
-          type="number"
-          placeholder="Stock"
-          value={stock}
-          onChange={(e) =>
-            setStock(e.target.value)
-          }
-        />
-
-        <br />
-        <br />
-
-        <button type="submit">
-          {isEditing
-            ? "Update Product"
-            : "Add Product"}
+        <button
+          className="admin-logout"
+          onClick={handleLogout}
+        >
+          🚪 Logout
         </button>
 
-        {isEditing && (
-          <button
-            type="button"
-            onClick={clearForm}
-            style={{ marginLeft: "10px" }}
-          >
-            Cancel
-          </button>
-        )}
+      </aside>
 
-      </form>
 
-      <hr />
+      {/* ========================================
+          MAIN CONTENT
+      ======================================== */}
 
-      {/* ==============================
-          MANAGE PRODUCTS
-      ============================== */}
+      <main className="admin-main">
 
-      <h2>Manage Products 📦</h2>
 
-      {products.length === 0 ? (
+        {/* HEADER */}
 
-        <p>No products found.</p>
+        <header className="admin-header">
 
-      ) : (
+          <div>
 
-        <table
-          border="1"
-          cellPadding="10"
-        >
+            <p className="dashboard-small">
+              ADMIN DASHBOARD
+            </p>
 
-          <thead>
+            <h1>
+              Welcome back 👋
+            </h1>
 
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Category</th>
-              <th>Stock</th>
-              <th>Action</th>
-            </tr>
+          </div>
 
-          </thead>
 
-          <tbody>
+          <div className="admin-profile">
 
-            {products.map((product) => (
+            <div className="admin-avatar">
+              A
+            </div>
 
-              <tr key={product.id}>
+            <div>
 
-                <td>{product.id}</td>
+              <strong>
+                Admin
+              </strong>
 
-                <td>{product.name}</td>
+              <span>
+                Administrator
+              </span>
 
-                <td>₹{product.price}</td>
+            </div>
 
-                <td>{product.category}</td>
+          </div>
 
-                <td>{product.stock}</td>
+        </header>
 
-                <td>
 
-                  <button
-                    onClick={() =>
-                      handleEditProduct(product)
-                    }
-                  >
-                    Edit
-                  </button>
+        {/* ========================================
+            STATISTICS
+        ======================================== */}
 
-                  <button
-                    onClick={() =>
-                      handleDeleteProduct(product.id)
-                    }
-                    style={{
-                      marginLeft: "10px",
-                    }}
-                  >
-                    Delete
-                  </button>
+        <section className="stats-grid">
 
-                </td>
 
-              </tr>
+          <div className="stat-card">
 
-            ))}
+            <div className="stat-icon">
+              🛍️
+            </div>
 
-          </tbody>
+            <div>
 
-        </table>
+              <p>
+                Total Products
+              </p>
 
-      )}
+              <h2>
+                {products.length}
+              </h2>
 
-      <hr />
+            </div>
 
-      {/* ==============================
-          MANAGE USERS
-      ============================== */}
+          </div>
 
-      <h2>Manage Users 👥</h2>
 
-      {users.length === 0 ? (
+          <div className="stat-card">
 
-        <p>No users found.</p>
+            <div className="stat-icon">
+              👥
+            </div>
 
-      ) : (
+            <div>
 
-        <table
-          border="1"
-          cellPadding="10"
-        >
+              <p>
+                Total Users
+              </p>
 
-          <thead>
+              <h2>
+                {users.length}
+              </h2>
 
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Verified</th>
-              <th>Created At</th>
-            </tr>
+            </div>
 
-          </thead>
+          </div>
 
-          <tbody>
 
-            {users.map((user) => (
+          <div className="stat-card">
 
-              <tr key={user.id}>
+            <div className="stat-icon">
+              📦
+            </div>
 
-                <td>{user.id}</td>
+            <div>
 
-                <td>{user.name}</td>
+              <p>
+                Total Orders
+              </p>
 
-                <td>{user.email}</td>
+              <h2>
+                0
+              </h2>
 
-                <td>
-                  {user.is_verified === 1
-                    ? "Yes"
-                    : "No"}
-                </td>
+            </div>
 
-                <td>
-                  {new Date(
-                    user.created_at
-                  ).toLocaleDateString()}
-                </td>
+          </div>
 
-              </tr>
 
-            ))}
+          <div className="stat-card">
 
-          </tbody>
+            <div className="stat-icon">
+              💰
+            </div>
 
-        </table>
+            <div>
 
-      )}
+              <p>
+                Revenue
+              </p>
+
+              <h2>
+                ₹0
+              </h2>
+
+            </div>
+
+          </div>
+
+
+        </section>
+
+
+        {/* ========================================
+            QUICK ACTIONS
+        ======================================== */}
+
+        <section className="dashboard-section">
+
+          <div className="section-header">
+
+            <div>
+
+              <p>
+                QUICK ACTIONS
+              </p>
+
+              <h2>
+                Manage TrendKart
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <div className="quick-actions">
+
+
+            <Link
+              to="/admin/products"
+              className="quick-card"
+            >
+
+              <span>
+                🛍️
+              </span>
+
+              <div>
+
+                <h3>
+                  Manage Products
+                </h3>
+
+                <p>
+                  Add, edit and delete products
+                </p>
+
+              </div>
+
+              <strong>
+                →
+              </strong>
+
+            </Link>
+
+
+            <Link
+              to="/admin/users"
+              className="quick-card"
+            >
+
+              <span>
+                👥
+              </span>
+
+              <div>
+
+                <h3>
+                  Manage Users
+                </h3>
+
+                <p>
+                  View and manage customers
+                </p>
+
+              </div>
+
+              <strong>
+                →
+              </strong>
+
+            </Link>
+
+
+            <Link
+              to="/admin/orders"
+              className="quick-card"
+            >
+
+              <span>
+                📦
+              </span>
+
+              <div>
+
+                <h3>
+                  Manage Orders
+                </h3>
+
+                <p>
+                  View customer orders
+                </p>
+
+              </div>
+
+              <strong>
+                →
+              </strong>
+
+            </Link>
+
+
+          </div>
+
+        </section>
+
+
+        {/* ========================================
+            RECENT PRODUCTS
+        ======================================== */}
+
+        <section className="dashboard-section">
+
+          <div className="section-header">
+
+            <div>
+
+              <p>
+                PRODUCT OVERVIEW
+              </p>
+
+              <h2>
+                Recent Products
+              </h2>
+
+            </div>
+
+
+            <Link
+              to="/admin/products"
+              className="view-link"
+            >
+              View All →
+            </Link>
+
+          </div>
+
+
+          <div className="table-wrapper">
+
+            <table>
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Product
+                  </th>
+
+                  <th>
+                    Category
+                  </th>
+
+                  <th>
+                    Price
+                  </th>
+
+                  <th>
+                    Stock
+                  </th>
+
+                  <th>
+                    Status
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody>
+
+                {products.length === 0 ? (
+
+                  <tr>
+
+                    <td
+                      colSpan="5"
+                      className="empty-table"
+                    >
+                      No products available
+                    </td>
+
+                  </tr>
+
+                ) : (
+
+                  products
+                    .slice(0, 5)
+                    .map((product) => (
+
+                      <tr key={product.id}>
+
+                        <td>
+
+                          <div className="table-product">
+
+                            <div className="table-image">
+
+                              {product.image ? (
+
+                                <img
+                                  src={product.image}
+                                  alt={product.name}
+                                />
+
+                              ) : (
+
+                                "👕"
+
+                              )}
+
+                            </div>
+
+                            <strong>
+                              {product.name}
+                            </strong>
+
+                          </div>
+
+                        </td>
+
+
+                        <td>
+                          {product.category}
+                        </td>
+
+
+                        <td>
+                          ₹{product.price}
+                        </td>
+
+
+                        <td>
+                          {product.stock}
+                        </td>
+
+
+                        <td>
+
+                          {product.stock > 0 ? (
+
+                            <span className="status active-status">
+                              In Stock
+                            </span>
+
+                          ) : (
+
+                            <span className="status inactive-status">
+                              Out of Stock
+                            </span>
+
+                          )}
+
+                        </td>
+
+                      </tr>
+
+                    ))
+
+                )}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </section>
+
+
+      </main>
 
     </div>
+
   );
+
 }
 
 export default AdminDashboard;
-

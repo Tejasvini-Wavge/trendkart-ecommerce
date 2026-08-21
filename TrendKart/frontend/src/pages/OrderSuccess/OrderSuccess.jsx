@@ -11,54 +11,109 @@ function OrderSuccess() {
   return (
     <div className="order-success-page">
 
+      {/* 
+          SUCCESS CARD
+      */}
+
       <div className="success-card">
+
+        {/* SUCCESS ICON */}
 
         <div className="success-icon">
           ✓
         </div>
 
+
+        {/* TITLE */}
+
         <h1>
           Order Placed Successfully!
         </h1>
+
+
+        {/* MESSAGE */}
 
         <p className="success-message">
           Thank you for shopping with TrendKart.
           Your order has been successfully placed.
         </p>
 
+
+        {/* ========================================
+            ORDER INFORMATION
+        ======================================== */}
+
         {orderId && (
+
           <div className="order-info">
 
+            {/* ORDER ID */}
+
             <div>
-              <span>Order ID</span>
-              <strong>#{orderId}</strong>
+              <span>
+                Order ID
+              </span>
+
+              <strong>
+                #{orderId}
+              </strong>
             </div>
 
+
+            {/* TOTAL */}
+
             {total !== undefined && (
+
               <div>
-                <span>Total Amount</span>
+                <span>
+                  Total Amount
+                </span>
+
                 <strong>
                   ₹{Number(total).toFixed(2)}
                 </strong>
               </div>
+
             )}
 
-            <div>
-              <span>Payment</span>
-              <strong>Cash on Delivery</strong>
-            </div>
+
+            {/* PAYMENT */}
 
             <div>
-              <span>Status</span>
+              <span>
+                Payment
+              </span>
+
+              <strong>
+                Cash on Delivery
+              </strong>
+            </div>
+
+
+            {/* STATUS */}
+
+            <div>
+              <span>
+                Status
+              </span>
+
               <strong className="status">
                 Order Placed
               </strong>
             </div>
 
           </div>
+
         )}
 
+
+        {/* ========================================
+            ACTION BUTTONS
+        ======================================== */}
+
         <div className="success-actions">
+
+          {/* CONTINUE SHOPPING */}
 
           <button
             onClick={() => navigate("/")}
@@ -67,8 +122,11 @@ function OrderSuccess() {
             Continue Shopping
           </button>
 
+
+          {/* VIEW MY ORDERS */}
+
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/my-orders")}
             className="orders-button"
           >
             View My Orders

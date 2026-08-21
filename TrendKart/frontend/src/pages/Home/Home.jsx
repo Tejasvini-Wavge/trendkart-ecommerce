@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,15 +5,18 @@ import "./Home.css";
 
 function Home() {
   const [products, setProducts] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
+
   const navigate = useNavigate();
+
+  // ========================================
+  // FETCH PRODUCTS
+  // ========================================
 
   useEffect(() => {
     fetchProducts();
+    updateCartCount();
   }, []);
-
-  // =========================
-  // FETCH PRODUCTS
-  // =========================
 
   const fetchProducts = async () => {
     try {
@@ -22,15 +24,43 @@ function Home() {
         "http://localhost:5000/admin/products"
       );
 
+      console.log(
+        "PRODUCT API RESPONSE:",
+        response.data
+      );
+
       setProducts(response.data.products || []);
+
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error(
+        "Error fetching products:",
+        error.response?.data || error.message
+      );
+
+      setProducts([]);
     }
   };
 
-  // =========================
+  // ========================================
+  // CART COUNT
+  // ========================================
+
+  const updateCartCount = () => {
+    const cart =
+      JSON.parse(localStorage.getItem("cart")) || [];
+
+    const count = cart.reduce(
+      (total, item) =>
+        total + (item.quantity || 1),
+      0
+    );
+
+    setCartCount(count);
+  };
+
+  // ========================================
   // ADD TO CART
-  // =========================
+  // ========================================
 
   const addToCart = (product) => {
     const cart =
@@ -47,7 +77,8 @@ function Home() {
         item.id === product.id
           ? {
               ...item,
-              quantity: item.quantity + 1,
+              quantity:
+                (item.quantity || 1) + 1,
             }
           : item
       );
@@ -66,20 +97,22 @@ function Home() {
       JSON.stringify(updatedCart)
     );
 
+    updateCartCount();
+
     alert("Product added to cart 🛒");
   };
 
-  // =========================
-  // PRODUCT DETAILS
-  // =========================
+  // ========================================
+  // OPEN PRODUCT DETAILS
+  // ========================================
 
   const openProduct = (id) => {
     navigate(`/product/${id}`);
   };
 
-  // =========================
+  // ========================================
   // CATEGORY FILTER
-  // =========================
+  // ========================================
 
   const getCategoryProducts = (category) => {
     return products.filter(
@@ -93,7 +126,7 @@ function Home() {
     <div className="home">
 
       {/* ======================================
-          TOP OFFER BAR
+          OFFER BAR
       ====================================== */}
 
       <div className="offer-bar">
@@ -111,6 +144,7 @@ function Home() {
           🛍️ TrendKart
         </Link>
 
+
         <div className="nav-links">
 
           <Link to="/">
@@ -125,7 +159,7 @@ function Home() {
             Women
           </a>
 
-          <a href="#new-arrivals">
+          <a href="#products">
             New Arrivals
           </a>
 
@@ -133,12 +167,16 @@ function Home() {
             Offers
           </a>
 
+          <Link to="/my-orders">
+            My Orders
+          </Link>
+
         </div>
 
 
         <div className="nav-actions">
 
-          {/* Search */}
+          {/* SEARCH */}
 
           <button
             className="icon-btn"
@@ -154,14 +192,19 @@ function Home() {
           </button>
 
 
-          {/* Wishlist */}
+          {/* WISHLIST */}
 
-          <button className="icon-btn">
+          <button
+            className="icon-btn"
+            onClick={() =>
+              alert("Wishlist coming soon ❤️")
+            }
+          >
             ♡
           </button>
 
 
-          {/* Login */}
+          {/* LOGIN */}
 
           <Link
             to="/login"
@@ -171,15 +214,17 @@ function Home() {
           </Link>
 
 
-          {/* Cart */}
+          {/* CART */}
 
           <button
             className="cart-btn"
-            onClick={() => navigate("/cart")}
+            onClick={() =>
+              navigate("/cart")
+            }
           >
             🛒
             <span>
-              0
+              {cartCount}
             </span>
           </button>
 
@@ -189,7 +234,7 @@ function Home() {
 
 
       {/* ======================================
-          HERO SECTION
+          HERO
       ====================================== */}
 
       <section className="hero">
@@ -212,6 +257,7 @@ function Home() {
             latest collection of stylish
             clothing for every occasion.
           </p>
+
 
           <div className="hero-buttons">
 
@@ -260,7 +306,7 @@ function Home() {
 
 
       {/* ======================================
-          CATEGORY SECTION
+          CATEGORIES
       ====================================== */}
 
       <section
@@ -282,7 +328,6 @@ function Home() {
 
 
         <div className="category-grid">
-
 
           {/* MEN */}
 
@@ -339,7 +384,7 @@ function Home() {
           {/* T-SHIRTS */}
 
           <a
-            href="#new-arrivals"
+            href="#products"
             className="category-card tshirt-card"
           >
 
@@ -414,6 +459,8 @@ function Home() {
         </div>
 
 
+        {/* NO PRODUCTS */}
+
         {products.length === 0 ? (
 
           <div className="no-products">
@@ -449,8 +496,7 @@ function Home() {
                   }
                 >
 
-
-                  {/* PRODUCT IMAGE */}
+                  {/* IMAGE */}
 
                   <div className="product-image">
 
@@ -474,9 +520,12 @@ function Home() {
 
                     <button
                       className="wishlist-btn"
-                      onClick={(event) =>
-                        event.stopPropagation()
-                      }
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        alert(
+                          "Wishlist coming soon ❤️"
+                        );
+                      }}
                     >
                       ♡
                     </button>
@@ -548,7 +597,15 @@ function Home() {
 
           <div className="view-all">
 
-            <button>
+            <button
+              onClick={() =>
+                document
+                  .getElementById("products")
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  })
+              }
+            >
               View All Products →
             </button>
 
@@ -560,7 +617,7 @@ function Home() {
 
 
       {/* ======================================
-          MEN SECTION
+          MEN PRODUCTS
       ====================================== */}
 
       {getCategoryProducts("Men").length > 0 && (
@@ -627,11 +684,13 @@ function Home() {
                       {product.name}
                     </h3>
 
+
                     <div className="product-bottom">
 
                       <strong>
                         ₹{product.price}
                       </strong>
+
 
                       <button
                         className="add-cart-btn"
@@ -662,7 +721,7 @@ function Home() {
 
 
       {/* ======================================
-          WOMEN SECTION
+          WOMEN PRODUCTS
       ====================================== */}
 
       {getCategoryProducts("Women").length > 0 && (
@@ -729,11 +788,13 @@ function Home() {
                       {product.name}
                     </h3>
 
+
                     <div className="product-bottom">
 
                       <strong>
                         ₹{product.price}
                       </strong>
+
 
                       <button
                         className="add-cart-btn"
@@ -764,7 +825,7 @@ function Home() {
 
 
       {/* ======================================
-          PROMOTIONAL BANNER
+          OFFERS
       ====================================== */}
 
       <section
@@ -788,7 +849,15 @@ function Home() {
             Get up to 40% OFF on selected styles.
           </span>
 
-          <button>
+          <button
+            onClick={() =>
+              document
+                .getElementById("products")
+                ?.scrollIntoView({
+                  behavior: "smooth",
+                })
+            }
+          >
             Shop Offers →
           </button>
 
@@ -817,7 +886,6 @@ function Home() {
 
 
         <div className="benefits-grid">
-
 
           <div className="benefit-card">
 
@@ -922,7 +990,13 @@ function Home() {
             placeholder="Enter your email address"
           />
 
-          <button>
+          <button
+            onClick={() =>
+              alert(
+                "Thank you for subscribing! 💌"
+              )
+            }
+          >
             Subscribe
           </button>
 
@@ -939,6 +1013,8 @@ function Home() {
 
         <div className="footer-grid">
 
+
+          {/* BRAND */}
 
           <div className="footer-brand">
 
@@ -958,6 +1034,8 @@ function Home() {
           </div>
 
 
+          {/* SHOP */}
+
           <div>
 
             <h3>
@@ -972,7 +1050,7 @@ function Home() {
               Women
             </a>
 
-            <a href="#new-arrivals">
+            <a href="#products">
               New Arrivals
             </a>
 
@@ -982,6 +1060,8 @@ function Home() {
 
           </div>
 
+
+          {/* HELP */}
 
           <div>
 
@@ -1008,6 +1088,8 @@ function Home() {
           </div>
 
 
+          {/* ACCOUNT */}
+
           <div>
 
             <h3>
@@ -1022,6 +1104,10 @@ function Home() {
               Create Account
             </Link>
 
+            <Link to="/my-orders">
+              My Orders
+            </Link>
+
             <Link to="/cart">
               Shopping Cart
             </Link>
@@ -1030,6 +1116,8 @@ function Home() {
 
         </div>
 
+
+        {/* FOOTER BOTTOM */}
 
         <div className="footer-bottom">
 
@@ -1052,4 +1140,3 @@ function Home() {
 }
 
 export default Home;
-

@@ -12,6 +12,12 @@ import ProductDetails from "../pages/ProductDetails/ProductDetails";
 import Cart from "../pages/Cart/Cart";
 import Checkout from "../pages/Checkout/Checkout";
 import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
+import MyOrders from "../pages/MyOrders/MyOrders";
+import OrderDetails from "../pages/OrderDetails/OrderDetails";
+import AdminProducts from "../pages/AdminProducts/AdminProducts";
+import AdminUsers from "../pages/AdminUsers/AdminUsers";
+import AdminOrders from "../pages/AdminOrders/AdminOrders";
+import AdminSettings from "../pages/AdminSettings/AdminSettings";
 // ================= ADMIN PAGES =================
 
 import AdminLogin from "../pages/AdminLogin/AdminLogin";
@@ -91,6 +97,27 @@ function AppRoutes() {
   element={<OrderSuccess />}
 />
 
+
+
+          <Route
+  path="/my-orders"
+  element={
+    <ProtectedRoute>
+      <MyOrders />
+    </ProtectedRoute>
+  }
+/>
+
+
+
+<Route
+  path="/orders/:id"
+  element={
+    <ProtectedRoute>
+      <OrderDetails />
+    </ProtectedRoute>
+  }
+/>
         {/* =========================================
             ADMIN ROUTES
         ========================================= */}
@@ -111,6 +138,29 @@ function AppRoutes() {
           }
         />
 
+        <Route
+  path="/admin/products"
+  element={<AdminProducts />}
+/>
+  <Route
+  path="/admin/users"
+  element={<AdminUsers />}
+/>  
+
+
+
+<Route
+  path="/admin/orders"
+  element={<AdminOrders />}
+/>
+
+
+
+
+            <Route
+  path="/admin/settings"
+  element={<AdminSettings />}
+/>
 
         {/* =========================================
             PAGE NOT FOUND
